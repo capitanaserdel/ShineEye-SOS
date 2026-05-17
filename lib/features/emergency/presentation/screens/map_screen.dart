@@ -346,13 +346,15 @@ class _InteractiveMapScreenState extends ConsumerState<InteractiveMapScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                child: Wrap(
+                  alignment: WrapAlignment.spaceAround,
+                  spacing: 12,
+                  runSpacing: 8,
                   children: [
-                    _buildLegendItem(Colors.red.shade900, 'Critical Incident'),
+                    _buildLegendItem(Colors.red.shade900, 'Critical'),
                     _buildLegendItem(Colors.red.shade500, 'High Urgency'),
                     _buildLegendItem(Colors.orange, 'Warning'),
-                    _buildLegendItem(Colors.blue, 'Evacuation Area'),
+                    _buildLegendItem(Colors.blue, 'Evacuation'),
                   ],
                 ),
               ),
