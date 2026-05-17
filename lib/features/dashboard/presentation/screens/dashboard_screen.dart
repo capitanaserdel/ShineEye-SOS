@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shineeye_app/features/auth/presentation/controllers/auth_notifier.dart';
+import 'package:shineeye_app/features/emergency/presentation/controllers/incident_notifier.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -114,14 +115,30 @@ class DashboardScreen extends ConsumerWidget {
                   children: [
                     // Simple simulated pulsing SOS
                     GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('SOS Activated! Silent audio/video stream initiated & alerts sent to contacts.'),
+                            content: Text('SOS Initiating... Silent broadcast activated!'),
                             backgroundColor: Colors.redAccent,
-                            duration: Duration(seconds: 4),
                           ),
                         );
+                        // Trigger urgent incident to backend
+                        final success = await ref.read(incidentProvider.notifier).reportIncident(
+                          type: 'insecurity',
+                          description: 'URGENT SOS: Civilian panic button triggered. Ambient monitoring initialized.',
+                          latitude: 9.0764785, // Default Abuja location
+                          longitude: 7.3985740,
+                          urgencyLevel: 'critical',
+                          isAnonymous: false,
+                        );
+                        if (success && context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('SOS Broadcasted to all nearby responders & active verifiers!'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
                       },
                       child: Container(
                         height: 70,
@@ -222,53 +239,37 @@ class DashboardScreen extends ConsumerWidget {
               mainAxisSpacing: 16,
               childAspectRatio: 1.4,
               children: [
-                _buildModuleCard(
+                 _buildModuleCard(
                   context,
                   title: 'Report Incident',
                   subtitle: 'Upload photo/video',
                   icon: Icons.add_alert_rounded,
                   color: const Color(0xFF0F4C5C),
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Launching Instant Incident Reporting...')),
-                    );
-                  },
+                  onTap: () => context.push('/report'),
                 ),
-                _buildModuleCard(
+                 _buildModuleCard(
                   context,
                   title: 'Interactive Map',
                   subtitle: 'Danger & Safe zones',
                   icon: Icons.map_outlined,
                   color: Colors.teal.shade700,
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Launching Interactive Proximity Map...')),
-                    );
-                  },
+                  onTap: () => context.push('/map'),
                 ),
-                _buildModuleCard(
+                 _buildModuleCard(
                   context,
                   title: 'Survival Academy',
                   subtitle: 'Offline guides',
                   icon: Icons.school_outlined,
                   color: Colors.indigo.shade700,
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Launching Multilingual Learning Modules...')),
-                    );
-                  },
+                  onTap: () => context.push('/survival'),
                 ),
-                _buildModuleCard(
+                 _buildModuleCard(
                   context,
                   title: 'ICE Profiles',
                   subtitle: 'Emergency Medical',
                   icon: Icons.health_and_safety_outlined,
                   color: Colors.purple.shade700,
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Opening In Case of Emergency settings...')),
-                    );
-                  },
+                  onTap: () => context.push('/ice'),
                 ),
               ],
             ),
